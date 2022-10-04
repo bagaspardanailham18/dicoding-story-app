@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/tv_item_avatar"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_avatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_item_username"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/poppinssemibold"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_item_avatar"
+        app:layout_constraintTop_toTopOf="@+id/tv_item_avatar"
+        tools:text="Username" />
+
+    <TextView
+        android:id="@+id/tv_item_location"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/poppinsregular"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_item_avatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_item_username"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_username"
+        android:text="@string/text_location" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/tv_item_story_image"
+        android:layout_width="0dp"
+        android:layout_height="250dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_location"
+        app:shapeAppearanceOverlay="@style/circleImageView"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tv_item_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:fontFamily="@font/poppinsregular"
+        app:layout_constraintEnd_toEndOf="@+id/tv_item_story_image"
+        app:layout_constraintStart_toStartOf="@+id/tv_item_story_image"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_story_image"
+        tools:text="@tools:sample/lorem/random" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:src="@drawable/ic_baseline_circle_24"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_item_date_created"
+        app:layout_constraintStart_toStartOf="@+id/tv_item_description"
+        app:layout_constraintTop_toTopOf="@+id/tv_item_date_created" />
+
+    <TextView
+        android:id="@+id/tv_item_date_created"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/poppinsregular"
+        android:textSize="11sp"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_description"
+        tools:text="March 18" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

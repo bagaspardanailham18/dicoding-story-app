@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">StoryApp</string>
+    <string name="setting_change_language">Change language</string>
+    <string name="title_stories">Stories</string>
+    <string name="menu_post_story">Post story</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="edt_email_error_message">Email address is not valid</string>
+    <string name="edt_pass_error_message">Password must be at least 6 characters</string>
+    <string name="registration_success">Registration success</string>
+    <string name="registration_error_message">Email is already taken</string>
+    <string name="edt_email_empty_message">Cannot be empty</string>
+    <string name="logout">logout</string>
+    <string name="menu_post">post</string>
+    <string name="text_camera">Camera</string>
+    <string name="text_gallery">Gallery</string>
+    <string name="text_hint_caption">Write a caption...</string>
+    <string name="text_location">location</string>
+    <string name="text_title_login">Hi! Lets share your story</string>
+    <string name="text_subtitle_login">Share your story with all of Dicoding students</string>
+    <string name="text_login">Login</string>
+    <string name="text_dont_have_account">Don\'t have an account?</string>
+    <string name="text_register">Register</string>
+    <string name="text_create_account">Create an account</string>
+    <string name="hint_full_name">Full name</string>
+    <string name="text_already_have_an_account">Already have an account?</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StoryApp</string>
+    <string name="setting_change_language">Ubah bahasa</string>
+    <string name="title_stories">Story</string>
+    <string name="menu_post_story">Unggah story</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="edt_email_error_message">Alamat email tidak valid</string>
+    <string name="edt_pass_error_message">Password minimal harus 6 karakter</string>
+    <string name="registration_success">Registrasi berhasil</string>
+    <string name="registration_error_message">Email sudah pernah dibuat</string>
+    <string name="edt_email_empty_message">Tidak boleh kosong</string>
+    <string name="logout">logout</string>
+    <string name="menu_post">unggah</string>
+    <string name="text_camera">Kamera</string>
+    <string name="text_gallery">Galeri</string>
+    <string name="text_hint_caption">Tulis deskripsi...</string>
+    <string name="text_location">lokasi</string>
+    <string name="text_title_login">Hi! Bagikan ceritamu</string>
+    <string name="text_subtitle_login">Bagikan ceritamu dengan siswa Dicoding lainnya</string>
+    <string name="text_login">Login</string>
+    <string name="text_dont_have_account">Belum punya akun?</string>
+    <string name="text_register">Register</string>
+    <string name="text_create_account">Buat akun</string>
+    <string name="hint_full_name">Nama lengkap</string>
+    <string name="text_already_have_an_account">Sudah punya akun?</string>
+</resources>

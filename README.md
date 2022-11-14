@@ -2,11 +2,12 @@
 A simple social media app for Dicoding student to share their learning story and achievment (Implementing Room, Retrofit, MVVM Architecture, Dependency Injection using Dagger Hilt, Repository Pattern, Paging3, Unit Testing).
 
 ### App Features
-* **Movie** - menampilkan daftar movie terbaru
-* **TV Show** - menampilkan daftar tv show terbaru
-* **Movie Favorite** - menampilkan daftar movie yang sudah ditambahkan sebagai favorite
-* **TV Favorite** - menampilkan daftar tv yang sudah ditambahkan sebagai favorite
-* **Search Movie & TV** - untuk melakukan pencarian movie & tv
+* Register User
+* Login User
+* Story List
+* Story Detail
+* Add New Story
+* Story Map
 
 ### Screenshot
 <span align="center">
@@ -17,9 +18,9 @@ A simple social media app for Dicoding student to share their learning story and
  </span>
 
 ### API
-Api yang digunakan dalam project ini yaitu https://story-api.dicoding.dev/v1
+Api that used for this project is https://story-api.dicoding.dev/v1
 
-Base URL yang digunakan adalah sebagai berikut
+Base URL
 ```
 https://story-api.dicoding.dev/v1
 ```

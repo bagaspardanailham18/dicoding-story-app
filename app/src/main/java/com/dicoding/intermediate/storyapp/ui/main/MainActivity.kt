@@ -16,10 +16,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.intermediate.storyapp.R
+import com.dicoding.intermediate.storyapp.data.DataStoreViewModel
 import com.dicoding.intermediate.storyapp.data.remote.response.ListStoryItem
 import com.dicoding.intermediate.storyapp.databinding.ActivityMainBinding
 import com.dicoding.intermediate.storyapp.ui.addstory.AddStoryActivity
 import com.dicoding.intermediate.storyapp.ui.auth.AuthActivity
+import com.dicoding.intermediate.storyapp.ui.map.MapsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val mainViewModel: MainViewModel by viewModels()
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     private val adapter = ListStoryAdapter()
 
@@ -45,34 +48,26 @@ class MainActivity : AppCompatActivity() {
         setupWindow()
 
         token = intent.getStringExtra(EXTRA_TOKEN)!!
-        setupRvStoriesData()
 
+        setLoadingState()
         setupStoriesRv()
+        setupRvStoriesData()
         setupRvWhenRefresh()
     }
 
     private fun setupRvStoriesData() {
-        setLoadingState(true)
+        mainViewModel._isLoading.value = true
         binding.swipeToRefresh.isRefreshing = true
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                mainViewModel.getAllStories(token).collect { result ->
-                    result.onSuccess { response ->
-                        setLoadingState(false)
-                        updateRecyclerViewData(response.listStory)
-                        binding.apply {
-
-                            swipeToRefresh.isRefreshing = false
-                        }
-                    }
-                    result.onFailure {
-                        Toast.makeText(
-                            this@MainActivity,
-                            "${it.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        setLoadingState(false)
+                mainViewModel.getAllStories(token).observe(this@MainActivity) { result ->
+                    if (!result.equals(null)) {
+                        mainViewModel._isLoading.value = false
                         binding.swipeToRefresh.isRefreshing = false
+                        val recyclerViewState = binding.rvStories.layoutManager?.onSaveInstanceState()
+                        adapter.submitData(lifecycle, result)
+                        binding.rvStories.layoutManager?.onRestoreInstanceState(recyclerViewState)
+
                     }
                 }
             }
@@ -82,7 +77,11 @@ class MainActivity : AppCompatActivity() {
     private fun setupStoriesRv() {
         binding.apply {
             rvStories.layoutManager = LinearLayoutManager(this@MainActivity)
-            rvStories.adapter = adapter
+            rvStories.adapter = adapter.withLoadStateFooter(
+                footer = LoadingStateAdapter {
+                    adapter.retry()
+                }
+            )
             rvStories.setHasFixedSize(true)
         }
     }
@@ -93,12 +92,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateRecyclerViewData(stories: List<ListStoryItem>) {
-        val recyclerViewState = binding.rvStories.layoutManager?.onSaveInstanceState()
-        adapter.submitList(stories)
-        binding.rvStories.layoutManager?.onRestoreInstanceState(recyclerViewState)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
@@ -106,6 +99,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
+            R.id.menu_map -> {
+                startActivity(Intent(this, MapsActivity::class.java).putExtra(MapsActivity.EXTRA_TOKEN, token))
+            }
             R.id.menu_post -> {
                 startActivity(Intent(this, AddStoryActivity::class.java))
             }
@@ -114,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             R.id.menu_logout -> {
-                mainViewModel.clearAuthToken()
+                dataStoreViewModel.clearAuthToken()
                 startActivity(Intent(this@MainActivity, AuthActivity::class.java))
                 finish()
                 return true
@@ -123,12 +119,14 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun setLoadingState(state: Boolean) {
-        binding.apply {
-            if (state) {
-                ObjectAnimator.ofFloat(binding.progressBar, View.ALPHA, 1f).start()
-            } else {
-                ObjectAnimator.ofFloat(binding.progressBar, View.ALPHA, 0f).start()
+    private fun setLoadingState() {
+        mainViewModel.isLoading.observe(this) { isLoading ->
+            binding.apply {
+                if (isLoading == true) {
+                    ObjectAnimator.ofFloat(binding.progressBar, View.ALPHA, 1f).start()
+                } else {
+                    ObjectAnimator.ofFloat(binding.progressBar, View.ALPHA, 0f).start()
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.dicoding.intermediate.storyapp.R
+import com.dicoding.intermediate.storyapp.data.DataStoreViewModel
 import com.dicoding.intermediate.storyapp.data.remote.Result
 import com.dicoding.intermediate.storyapp.databinding.FragmentLoginBinding
 import com.dicoding.intermediate.storyapp.ui.auth.AuthViewModel
@@ -30,6 +31,7 @@ class LoginFragment : Fragment() {
     private var loginJob: Job = Job()
 
     private val viewModels: AuthViewModel by viewModels()
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,7 +83,7 @@ class LoginFragment : Fragment() {
                                         setLoadingState(true)
                                     }
                                     is Result.Success -> {
-                                        viewModels.saveAuthToken(result.data.loginResult.token)
+                                        dataStoreViewModel.saveAuthToken(result.data.loginResult.token)
                                         Intent(requireContext(), MainActivity::class.java).also { intent ->
                                             intent.putExtra(EXTRA_TOKEN, result.data.loginResult.token)
                                             startActivity(intent)

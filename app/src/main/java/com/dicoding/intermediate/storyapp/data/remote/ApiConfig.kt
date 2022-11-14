@@ -22,8 +22,8 @@ class ApiConfig {
 
             val retrofit = Retrofit.Builder()
                 .baseUrl("https://story-api.dicoding.dev/v1/")
-                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
                 .build()
 
             return retrofit.create(ApiService::class.java)

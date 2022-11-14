@@ -19,7 +19,7 @@ interface ApiService {
         @Field("name") name: String,
         @Field("email") email: String,
         @Field("password") password: String
-    ) : Response<RegisterResponse>
+    ) : RegisterResponse
 
     @FormUrlEncoded
     @POST("login")
@@ -28,11 +28,19 @@ interface ApiService {
         @Field("password") password: String
     ) : LoginResponse
 
+//    @GET("stories")
+//    suspend fun getAllStories(
+//        @Header("Authorization") token: String,
+//        @Query("page") page: Int?,
+//        @Query("size") size: Int?
+//    ) : GetAllStoriesResponse
+
     @GET("stories")
     suspend fun getAllStories(
         @Header("Authorization") token: String,
         @Query("page") page: Int?,
-        @Query("size") size: Int?
+        @Query("size") size: Int?,
+        @Query("location") location: Int? = 1
     ) : GetAllStoriesResponse
 
     @Multipart
@@ -40,7 +48,9 @@ interface ApiService {
     suspend fun uploadStory(
         @Header("Authorization") token: String,
         @Part file: MultipartBody.Part,
-        @Part("description") description: RequestBody
+        @Part("description") description: RequestBody,
+        @Part("lat") lat: Float?,
+        @Part("lon") lon: Float?
     ) : FileUploadResponse
 
 }

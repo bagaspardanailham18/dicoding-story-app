@@ -14,7 +14,7 @@
     <string name="text_camera">Camera</string>
     <string name="text_gallery">Gallery</string>
     <string name="text_hint_caption">Write a caption...</string>
-    <string name="text_location">location</string>
+    <string name="text_location">no location</string>
     <string name="text_title_login">Hi! Lets share your story</string>
     <string name="text_subtitle_login">Share your story with all of Dicoding students</string>
     <string name="text_login">Login</string>
@@ -23,4 +23,7 @@
     <string name="text_create_account">Create an account</string>
     <string name="hint_full_name">Full name</string>
     <string name="text_already_have_an_account">Already have an account?</string>
+
+    <string name="retry">Try again</string>
+    <string name="title_activity_maps">StoryMaps</string>
 </resources>

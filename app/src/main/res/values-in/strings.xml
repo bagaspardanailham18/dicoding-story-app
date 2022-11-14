@@ -15,7 +15,7 @@
     <string name="text_camera">Kamera</string>
     <string name="text_gallery">Galeri</string>
     <string name="text_hint_caption">Tulis deskripsi...</string>
-    <string name="text_location">lokasi</string>
+    <string name="text_location">tidak ada lokasi</string>
     <string name="text_title_login">Hi! Bagikan ceritamu</string>
     <string name="text_subtitle_login">Bagikan ceritamu dengan siswa Dicoding lainnya</string>
     <string name="text_login">Login</string>
@@ -24,4 +24,7 @@
     <string name="text_create_account">Buat akun</string>
     <string name="hint_full_name">Nama lengkap</string>
     <string name="text_already_have_an_account">Sudah punya akun?</string>
+
+    <string name="retry">Coba lagi</string>
+    <string name="title_activity_maps">StoryMaps</string>
 </resources>

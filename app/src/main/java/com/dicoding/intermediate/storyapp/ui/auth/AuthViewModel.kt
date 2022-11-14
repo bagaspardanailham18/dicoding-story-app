@@ -17,31 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val storyRepository: StoryRepository): ViewModel() {
 
-    fun registerUser(name: String, email: String, password: String): LiveData<Result<Response<RegisterResponse>>> {
-        val result = MutableLiveData<Result<Response<RegisterResponse>>>()
-        viewModelScope.launch {
-            storyRepository.registerUser(name, email, password).collect {
-                result.postValue(it)
-            }
-        }
-        return result
-    }
+    fun registerUser(name: String, email: String, password: String) = storyRepository.registerUser(name, email, password)
 
-    fun loginUser(email: String, password: String): LiveData<Result<LoginResponse>> {
-        val result = MutableLiveData<Result<LoginResponse>>()
-        viewModelScope.launch {
-            storyRepository.loginUser(email, password).collect {
-                result.postValue(it)
-            }
-        }
-        return result
-    }
-
-
-    fun saveAuthToken(token: String) {
-        viewModelScope.launch {
-            storyRepository.saveAuthToken(token)
-        }
-    }
+    fun loginUser(email: String, password: String) = storyRepository.loginUser(email, password)
 
 }

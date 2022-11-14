@@ -4,16 +4,18 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class PreferenceDataSource constructor(private val dataStore: DataStore<Preferences>) {
 
-    fun getAuthToken(): Flow<String?> {
+    fun getAuthToken(): LiveData<String?> {
         return dataStore.data.map { preferences ->
             preferences[TOKEN_KEY]
-        }
+        }.asLiveData()
     }
 
     suspend fun saveAuthToken(token: String) {

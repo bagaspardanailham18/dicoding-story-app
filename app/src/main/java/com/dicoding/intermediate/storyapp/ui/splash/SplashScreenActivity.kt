@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.dicoding.intermediate.storyapp.data.DataStoreViewModel
 import com.dicoding.intermediate.storyapp.databinding.ActivitySplashScreenBinding
 import com.dicoding.intermediate.storyapp.ui.main.MainActivity
 import com.dicoding.intermediate.storyapp.ui.auth.AuthActivity
@@ -21,7 +22,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySplashScreenBinding
 
-    private val splashScreenViewModel: SplashScreenViewModel by viewModels()
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,17 +36,15 @@ class SplashScreenActivity : AppCompatActivity() {
     private fun determiningDirection() {
         lifecycleScope.launchWhenCreated {
             delay(3000)
-            launch {
-                splashScreenViewModel.getAuthToken().observe(this@SplashScreenActivity) { token ->
-                    if (token.isNullOrEmpty() || token == "") {
-                        Log.d("token", "token empty")
-                        startActivity(Intent(this@SplashScreenActivity, AuthActivity::class.java))
-                        finish()
-                    } else {
-                        Log.d("token", "token : $token")
-                        startActivity(Intent(this@SplashScreenActivity, MainActivity::class.java).putExtra(EXTRA_TOKEN, token))
-                        finish()
-                    }
+            dataStoreViewModel.getAuthToken().observe(this@SplashScreenActivity) { token ->
+                if (token.isNullOrEmpty() || token == "") {
+                    Log.d("token", "token empty")
+                    startActivity(Intent(this@SplashScreenActivity, AuthActivity::class.java))
+                    finish()
+                } else {
+                    Log.d("token", "token : $token")
+                    startActivity(Intent(this@SplashScreenActivity, MainActivity::class.java).putExtra(EXTRA_TOKEN, token))
+                    finish()
                 }
             }
         }

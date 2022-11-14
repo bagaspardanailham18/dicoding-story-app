@@ -2,8 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/menu_map"
+        android:icon="@drawable/ic_map"
+        app:showAsAction="always"
+        android:title="Map" />
+
     <item android:id="@+id/menu_post"
-        android:icon="@drawable/add"
+        android:icon="@drawable/ic_add"
         android:title="@string/menu_post_story"
         app:showAsAction="ifRoom" />
 

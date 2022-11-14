@@ -2,6 +2,7 @@ package com.dicoding.intermediate.storyapp.ui.addstory
 
 import android.Manifest
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.content.pm.PackageManager
@@ -23,9 +24,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import com.dicoding.intermediate.storyapp.R
+import com.dicoding.intermediate.storyapp.data.DataStoreViewModel
 import com.dicoding.intermediate.storyapp.databinding.ActivityAddStoryBinding
 import com.dicoding.intermediate.storyapp.ui.main.MainActivity
 import com.dicoding.intermediate.storyapp.utils.uriToFile
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -44,35 +48,97 @@ class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var currentPhotoPath: String
 
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
     private var getFile: File? = null
 
     private val addStoryViewModel: AddStoryViewModel by viewModels()
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
+
+    private lateinit var token: String
+
+    private var latitude: Double? = 0.0
+    private var longitude: Double? = 0.0
 
     companion object {
-        private val REQUIRED_PERMISSION = arrayOf(Manifest.permission.CAMERA)
-        private const val REQUEST_CODE_PERMISSION = 10
+        private val CAMERA_PERMISSION = arrayOf(Manifest.permission.CAMERA)
+        private val LOCATION_PERMISSION = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        private const val REQUEST_CODE_CAMERA_PERMISSION = 10
+        private const val REQUEST_CODE_LOCATION_PERMISSION = 20
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.customToolbar)
-        supportActionBar?.title = "Add Post"
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setActionBar()
+        setActions()
 
-        if (!allPermissionGranted()) {
-            ActivityCompat.requestPermissions(
-                this,
-                REQUIRED_PERMISSION,
-                REQUEST_CODE_PERMISSION
-            )
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+        if (locationPermissionGranted()) {
+            getCurrentLocation()
         }
 
-        binding.btnAddImgCamera.setOnClickListener { startCamera() }
+        dataStoreViewModel.getAuthToken().observe(this) {
+            if (it != null) {
+                token = it
+            }
+        }
+    }
+
+    private fun setActions() {
+        binding.btnAddImgCamera.setOnClickListener {
+            if (!cameraPermissionGranted()) {
+                ActivityCompat.requestPermissions(this,
+                    CAMERA_PERMISSION, REQUEST_CODE_CAMERA_PERMISSION)
+            } else {
+                startCamera()
+            }
+        }
+
         binding.btnAddImgGallery.setOnClickListener { startGallery() }
+        binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
+            if (locationPermissionGranted()) {
+                // binding.switchLocation.isChecked = true
+
+                getCurrentLocation()
+                if (isChecked) {
+                    // setSwitchLocation()
+                    binding.tvLatlong.visibility = View.VISIBLE
+                    Log.d("AddStoryActivity", "Lat: $latitude, Lon: $longitude")
+                } else {
+                    binding.tvLatlong.visibility = View.INVISIBLE
+                }
+            } else {
+                ActivityCompat.requestPermissions(this, LOCATION_PERMISSION, REQUEST_CODE_LOCATION_PERMISSION)
+                binding.switchLocation.isChecked = false
+                // requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                this.latitude = location.latitude
+                this.longitude = location.longitude
+                binding.tvLatlong.text = """
+                                    Lat : ${location.latitude}
+                                    Lon : ${location.longitude}
+                                """.trimIndent()
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -81,17 +147,26 @@ class AddStoryActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSION) {
-            if (!allPermissionGranted()) {
-                Toast.makeText(this, "Tidak mendapatkan permission.",
-                    Toast.LENGTH_SHORT).show()
-                finish()
+        if (requestCode == REQUEST_CODE_CAMERA_PERMISSION) {
+            if (!cameraPermissionGranted()) {
+                Toast.makeText(this, "Camera permission is not granted.", Toast.LENGTH_SHORT).show()
+                // finish()
             }
-
+        } else if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
+            if (!locationPermissionGranted()) {
+                Toast.makeText(this, "Location permission is not granted.", Toast.LENGTH_SHORT).show()
+                binding.switchLocation.isChecked = false
+            } else {
+                binding.switchLocation.isChecked = true
+            }
         }
     }
 
-    private fun allPermissionGranted() = REQUIRED_PERMISSION.all {
+    private fun cameraPermissionGranted() = CAMERA_PERMISSION.all {
+        ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun locationPermissionGranted() = LOCATION_PERMISSION.all {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
@@ -174,20 +249,21 @@ class AddStoryActivity : AppCompatActivity() {
                 requestImageFile
             )
 
+            val latitude = if (binding.switchLocation.isChecked) this.latitude?.toFloat() else null
+            val longitude = if (binding.switchLocation.isChecked) this.longitude?.toFloat() else null
+
             lifecycleScope.launch {
-                addStoryViewModel.getAuthToken().observe(this@AddStoryActivity) { token ->
-                    lifecycleScope.launch {
-                        addStoryViewModel.uploadStory(token, imageMultipart, description).collect { result ->
-                            result.onSuccess { response ->
-                                setLoadingState(false)
-                                Toast.makeText(this@AddStoryActivity, response.message, Toast.LENGTH_SHORT).show()
-//                                startActivity(Intent(this@AddStoryActivity, MainActivity::class.java))
-                                finish()
-                            }
-                            result.onFailure {
-                                Toast.makeText(this@AddStoryActivity, it.message, Toast.LENGTH_SHORT).show()
-                                setLoadingState(false)
-                            }
+                addStoryViewModel.uploadStory(token, imageMultipart, description, latitude, longitude).observe(this@AddStoryActivity) { result ->
+                    when (result) {
+                        is com.dicoding.intermediate.storyapp.data.remote.Result.Success -> {
+                            setLoadingState(false)
+                            Toast.makeText(this@AddStoryActivity, result.data.message, Toast.LENGTH_SHORT).show()
+                            Log.d("uploaded", "$latitude and $longitude")
+                            finish()
+                        }
+                        is com.dicoding.intermediate.storyapp.data.remote.Result.Error -> {
+                            Toast.makeText(this@AddStoryActivity, "Terjadi kesalahan" + result.error, Toast.LENGTH_SHORT).show()
+                            setLoadingState(false)
                         }
                     }
                 }
@@ -218,5 +294,12 @@ class AddStoryActivity : AppCompatActivity() {
                 ObjectAnimator.ofFloat(binding.progressBar, View.ALPHA, 0f).start()
             }
         }
+    }
+
+    private fun setActionBar() {
+        setSupportActionBar(binding.customToolbar)
+        supportActionBar?.title = "Add Post"
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }

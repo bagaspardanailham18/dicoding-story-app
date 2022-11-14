@@ -12,7 +12,7 @@ A simple social media app for Dicoding student to share their learning story and
 ### Screenshot
 <span align="center">
  <hr>
- <p align="center"><img src="screenshot/banner.png" alt="Filmbase Screenshot" width="850" height="500"></p>
+ <p align="center"><img src="screenshot/banner story app.png" alt="Filmbase Screenshot" width="850" height="500"></p>
  <p align="center">Screenshot</p>
  <hr>
  </span>

@@ -1,5 +1,5 @@
 # Dicoding Story App
-A simple social media app for Dicoding student to share their learning story and achievment (Implementing Room, Retrofit, MVVM Architecture, Dependency Injection using Dagger Hilt, Repository Pattern, Paging3, Unit Testing).
+A simple social media app for Dicoding student to share their learning story and achievement (Implementing Room, Retrofit, MVVM Architecture, Dependency Injection using Dagger Hilt, Repository Pattern, Paging3, Unit Testing).
 
 ### App Features
 * Register User
